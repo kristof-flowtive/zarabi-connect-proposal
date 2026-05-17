@@ -1,0 +1,473 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Zarabi Connect — Prototype to Polished MVP</title>
+<style>
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth}
+  body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:#0b0f1a;color:#e5e7eb;line-height:1.6;-webkit-font-smoothing:antialiased}
+  a{color:inherit;text-decoration:none}
+
+  nav{position:fixed;top:0;left:0;right:0;background:rgba(11,15,26,.85);backdrop-filter:blur(12px);border-bottom:1px solid #1f2937;z-index:100;padding:14px 24px}
+  nav .wrap{max-width:1100px;margin:0 auto;display:flex;justify-content:space-between;align-items:center;gap:24px;flex-wrap:wrap}
+  nav .brand{font-weight:700;font-size:15px;letter-spacing:.3px;background:linear-gradient(135deg,#818cf8,#6366f1);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+  nav ul{display:flex;list-style:none;gap:22px;flex-wrap:wrap}
+  nav ul a{font-size:13px;color:#9ca3af;transition:color .2s}
+  nav ul a:hover{color:#a5b4fc}
+
+  .container{max-width:1100px;margin:0 auto;padding:0 24px}
+
+  section{padding:90px 0;border-bottom:1px solid #111827}
+  section:last-of-type{border-bottom:none}
+  h2{font-size:30px;font-weight:700;margin-bottom:14px;letter-spacing:-.4px}
+  .eyebrow{display:inline-block;font-size:12px;font-weight:600;color:#a5b4fc;letter-spacing:1.5px;text-transform:uppercase;margin-bottom:14px}
+  .lead{color:#9ca3af;font-size:16px;max-width:680px;margin-bottom:40px}
+
+  .hero{padding:160px 0 100px;text-align:center}
+  .hero h1{font-size:54px;font-weight:800;line-height:1.1;letter-spacing:-1.2px;margin-bottom:22px;background:linear-gradient(135deg,#f9fafb 0%,#a5b4fc 60%,#6366f1 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+  .hero p{font-size:19px;color:#9ca3af;max-width:680px;margin:0 auto 36px}
+  .badges{display:flex;justify-content:center;gap:10px;flex-wrap:wrap}
+  .badge{display:inline-flex;align-items:center;gap:8px;background:#111827;border:1px solid #1f2937;padding:8px 14px;border-radius:999px;font-size:13px;color:#cbd5e1}
+  .badge svg{width:16px;height:16px}
+
+  .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:18px}
+  .card{background:#111827;border:1px solid #1f2937;border-radius:14px;padding:24px;transition:border-color .2s,transform .2s}
+  .card:hover{border-color:#374151}
+  .card h3{font-size:15px;font-weight:600;margin-bottom:8px;color:#f3f4f6}
+  .card p{font-size:14px;color:#9ca3af}
+
+  .pain .card{display:flex;gap:14px;align-items:flex-start}
+  .dot{flex-shrink:0;width:10px;height:10px;border-radius:50%;margin-top:7px}
+  .dot-red{background:#ef4444;box-shadow:0 0 12px rgba(239,68,68,.5)}
+  .dot-green{background:#10b981;box-shadow:0 0 12px rgba(16,185,129,.5)}
+
+  .solution p{color:#cbd5e1;font-size:16px;margin-bottom:18px;max-width:780px}
+
+  .timeline{position:relative;padding-left:36px;max-width:780px}
+  .timeline::before{content:'';position:absolute;left:14px;top:8px;bottom:8px;width:2px;background:linear-gradient(180deg,#6366f1,#1f2937)}
+  .step{position:relative;padding-bottom:24px}
+  .step:last-child{padding-bottom:0}
+  .step .num{position:absolute;left:-36px;top:0;width:30px;height:30px;border-radius:50%;background:#0b0f1a;border:2px solid #6366f1;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:#a5b4fc}
+  .step h4{font-size:15px;font-weight:600;margin-bottom:4px;color:#f3f4f6}
+  .step p{font-size:14px;color:#9ca3af}
+
+  .flow{display:grid;gap:18px;margin-top:20px}
+  .scenario{background:#111827;border:1px solid #1f2937;border-radius:14px;padding:22px}
+  .scenario h4{font-size:14px;font-weight:600;color:#a5b4fc;margin-bottom:14px;text-transform:uppercase;letter-spacing:1px}
+  .nodes{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+  .node{display:inline-flex;align-items:center;gap:8px;background:#0b0f1a;border:1px solid #1f2937;padding:10px 14px;border-radius:10px;font-size:13px;color:#e5e7eb;font-weight:500}
+  .node svg{width:18px;height:18px;flex-shrink:0}
+  .arrow{color:#4b5563;font-size:18px}
+  .trigger{background:linear-gradient(135deg,rgba(99,102,241,.15),rgba(99,102,241,.05));border-color:#4f46e5}
+
+  .delivery .timeline .step .num{background:#1f2937;border-color:#4f46e5;font-size:11px;width:64px;border-radius:14px;left:-70px}
+  .delivery .timeline{padding-left:70px}
+  .delivery .timeline::before{left:14px}
+
+  .cta-box{background:linear-gradient(135deg,rgba(99,102,241,.12),rgba(139,92,246,.08));border:1px solid transparent;background-clip:padding-box;border-radius:18px;padding:48px;text-align:center;position:relative;overflow:hidden}
+  .cta-box::before{content:'';position:absolute;inset:0;border-radius:18px;padding:1px;background:linear-gradient(135deg,#6366f1,#8b5cf6,#6366f1);-webkit-mask:linear-gradient(#fff 0 0) content-box,linear-gradient(#fff 0 0);-webkit-mask-composite:xor;mask-composite:exclude;pointer-events:none}
+  .cta-box h2{margin-bottom:14px}
+  .cta-box p{color:#cbd5e1;max-width:560px;margin:0 auto 28px}
+  .btn{display:inline-block;background:linear-gradient(135deg,#6366f1,#4f46e5);color:white;padding:14px 32px;border-radius:10px;font-weight:600;font-size:15px;transition:transform .15s,box-shadow .2s;border:none;cursor:pointer}
+  .btn:hover{transform:translateY(-1px);box-shadow:0 10px 30px rgba(99,102,241,.35)}
+  .btn-ghost{background:transparent;border:1px solid #4f46e5;color:#a5b4fc}
+  .btn-ghost:hover{background:rgba(99,102,241,.08)}
+
+  .tier-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;margin-top:8px}
+  .tier{background:#111827;border:1px solid #1f2937;border-radius:16px;padding:30px 26px;display:flex;flex-direction:column;position:relative;transition:border-color .2s,transform .2s}
+  .tier:hover{border-color:#374151;transform:translateY(-2px)}
+  .tier .label{font-size:11px;letter-spacing:1.5px;text-transform:uppercase;color:#9ca3af;font-weight:600;margin-bottom:10px}
+  .tier h3{font-size:22px;font-weight:600;margin-bottom:6px;color:#f3f4f6}
+  .tier .tagline{font-size:13px;color:#9ca3af;margin-bottom:22px;min-height:36px}
+  .tier .price{font-size:42px;font-weight:700;color:#f9fafb;letter-spacing:-.5px;line-height:1}
+  .tier .price-meta{font-size:12px;color:#9ca3af;margin-top:6px;margin-bottom:22px}
+  .tier ul{list-style:none;display:flex;flex-direction:column;gap:10px;margin-bottom:24px;flex:1}
+  .tier ul li{font-size:13px;color:#cbd5e1;display:flex;gap:10px;align-items:flex-start;line-height:1.5}
+  .tier ul li::before{content:'';flex-shrink:0;width:14px;height:14px;border-radius:50%;background:rgba(16,185,129,.15);margin-top:4px;background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12'><path fill='none' stroke='%2310b981' stroke-width='2' stroke-linecap='round' d='M3 6.5L5 8.5L9 4'/></svg>");background-repeat:no-repeat;background-position:center}
+  .tier .tier-btn{display:inline-block;width:100%;text-align:center;padding:12px 18px;border-radius:8px;font-weight:600;font-size:14px;border:1px solid #374151;color:#e5e7eb;background:transparent;transition:all .2s}
+  .tier .tier-btn:hover{border-color:#6366f1;color:#a5b4fc}
+  .tier.recommended{border-color:#6366f1;background:linear-gradient(180deg,rgba(99,102,241,.06),#111827 70%);box-shadow:0 0 0 1px rgba(99,102,241,.15)}
+  .tier.recommended .ribbon{position:absolute;top:-12px;right:22px;background:linear-gradient(135deg,#6366f1,#4f46e5);color:#fff;font-size:11px;font-weight:600;letter-spacing:1.2px;text-transform:uppercase;padding:5px 12px;border-radius:999px;box-shadow:0 8px 20px rgba(99,102,241,.4)}
+  .tier.recommended .tier-btn{background:linear-gradient(135deg,#6366f1,#4f46e5);color:#fff;border-color:transparent}
+  .tier.recommended .tier-btn:hover{transform:translateY(-1px);box-shadow:0 10px 24px rgba(99,102,241,.3);color:#fff}
+
+  .price-explainer{margin-top:36px;background:#0f1422;border:1px solid #1f2937;border-radius:14px;padding:28px}
+  .price-explainer h3{font-size:17px;font-weight:600;color:#f3f4f6;margin-bottom:14px}
+  .price-explainer p{color:#cbd5e1;font-size:14px;margin-bottom:12px}
+  .price-explainer p:last-child{margin-bottom:0}
+  .price-explainer strong{color:#a5b4fc;font-weight:600}
+
+  .pricing-notes{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px;margin-top:28px}
+  .pricing-notes .note{background:#111827;border:1px solid #1f2937;border-radius:12px;padding:18px}
+  .pricing-notes .note .k{font-size:11px;color:#a5b4fc;letter-spacing:1.5px;text-transform:uppercase;font-weight:600;margin-bottom:6px}
+  .pricing-notes .note .v{font-size:13px;color:#cbd5e1}
+
+  @media(max-width:900px){.tier-grid{grid-template-columns:1fr;gap:14px}.tier.recommended .ribbon{right:50%;transform:translateX(50%)}}
+
+  footer{padding:32px 24px;text-align:center;font-size:13px;color:#6b7280;border-top:1px solid #111827}
+
+  @media(max-width:640px){
+    .hero{padding:120px 0 60px}
+    .hero h1{font-size:36px}
+    .hero p{font-size:16px}
+    h2{font-size:24px}
+    section{padding:60px 0}
+    nav ul{gap:14px}
+    nav ul a{font-size:12px}
+    .cta-box{padding:32px 22px}
+  }
+</style>
+</head>
+<body>
+
+<svg style="display:none" xmlns="http://www.w3.org/2000/svg">
+  <symbol id="logo-next" viewBox="0 0 40 40">
+    <circle cx="20" cy="20" r="20" fill="#000"/>
+    <path fill="#fff" d="M15 12h2.2l11.3 14.4V12h1.6v16h-2.2L16.6 13.6V28H15V12z"/>
+    <rect x="27.4" y="12" width="1.6" height="16" fill="#fff"/>
+  </symbol>
+  <symbol id="logo-react" viewBox="0 0 40 40">
+    <circle cx="20" cy="20" r="2.6" fill="#61dafb"/>
+    <g fill="none" stroke="#61dafb" stroke-width="1.4">
+      <ellipse cx="20" cy="20" rx="14" ry="5.4"/>
+      <ellipse cx="20" cy="20" rx="14" ry="5.4" transform="rotate(60 20 20)"/>
+      <ellipse cx="20" cy="20" rx="14" ry="5.4" transform="rotate(-60 20 20)"/>
+    </g>
+  </symbol>
+  <symbol id="logo-tailwind" viewBox="0 0 40 24">
+    <path fill="#06b6d4" d="M17 2c-4 0-6.5 2-7.5 6 1.5-2 3.25-2.75 5.25-2.25 1.14.285 1.96 1.115 2.85 2.04C19.06 9.3 20.74 11 24.5 11c4 0 6.5-2 7.5-6-1.5 2-3.25 2.75-5.25 2.25-1.14-.285-1.96-1.115-2.85-2.04C22.44 3.7 20.76 2 17 2zM9.5 11c-4 0-6.5 2-7.5 6 1.5-2 3.25-2.75 5.25-2.25 1.14.285 1.96 1.115 2.85 2.04C11.56 18.3 13.24 20 17 20c4 0 6.5-2 7.5-6-1.5 2-3.25 2.75-5.25 2.25-1.14-.285-1.96-1.115-2.85-2.04C14.94 12.7 13.26 11 9.5 11z"/>
+  </symbol>
+  <symbol id="logo-supabase" viewBox="0 0 40 40">
+    <defs><linearGradient id="sgrad" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#3ecf8e"/><stop offset="100%" stop-color="#249361"/></linearGradient></defs>
+    <path fill="url(#sgrad)" d="M22.5 4l-15 18.5h11v13.5l15-18.5h-11V4z"/>
+  </symbol>
+  <symbol id="logo-vercel" viewBox="0 0 40 36">
+    <path fill="#fff" d="M20 4l18 30H2L20 4z"/>
+  </symbol>
+  <symbol id="logo-figma" viewBox="0 0 40 60">
+    <circle cx="20" cy="30" r="10" fill="#1abcfe"/>
+    <path fill="#0acf83" d="M10 40a10 10 0 0 0 10 10V40H10z"/>
+    <path fill="#a259ff" d="M20 20h10v20H20z"/>
+    <path fill="#ff7262" d="M20 0H10a10 10 0 0 0 0 20h10V0z"/>
+    <path fill="#f24e1e" d="M30 0H20v20h10a10 10 0 0 0 0-20z"/>
+  </symbol>
+  <symbol id="logo-postgres" viewBox="0 0 40 40">
+    <ellipse cx="20" cy="20" rx="16" ry="14" fill="#336791"/>
+    <path fill="#fff" d="M14 14h12v2H14zm0 5h12v2H14zm0 5h8v2h-8z"/>
+  </symbol>
+  <symbol id="logo-buyer" viewBox="0 0 24 24">
+    <circle cx="12" cy="8" r="4" fill="#a5b4fc"/>
+    <path fill="#a5b4fc" d="M4 21c0-4.4 3.6-8 8-8s8 3.6 8 8H4z"/>
+  </symbol>
+  <symbol id="logo-mfg" viewBox="0 0 24 24">
+    <path fill="#fbbf24" d="M3 21V11l7 4V11l7 4V11l4 3v7H3z"/>
+  </symbol>
+  <symbol id="logo-brand" viewBox="0 0 24 24">
+    <path fill="#ec4899" d="M12 2l3 6 7 1-5 5 1 7-6-3-6 3 1-7-5-5 7-1 3-6z"/>
+  </symbol>
+  <symbol id="logo-match" viewBox="0 0 24 24">
+    <circle cx="8" cy="12" r="5" fill="none" stroke="#10b981" stroke-width="2"/>
+    <circle cx="16" cy="12" r="5" fill="none" stroke="#10b981" stroke-width="2"/>
+  </symbol>
+  <symbol id="logo-shield" viewBox="0 0 24 24">
+    <path fill="#10b981" d="M12 2l9 4v6c0 5.5-3.8 10.7-9 12-5.2-1.3-9-6.5-9-12V6l9-4z"/>
+    <path fill="#fff" d="M10 14l-3-3 1.4-1.4L10 11.2l4.6-4.6L16 8l-6 6z"/>
+  </symbol>
+  <symbol id="logo-search" viewBox="0 0 24 24">
+    <circle cx="10" cy="10" r="6" fill="none" stroke="#a5b4fc" stroke-width="2"/>
+    <path stroke="#a5b4fc" stroke-width="2" stroke-linecap="round" d="M15 15l5 5"/>
+  </symbol>
+</svg>
+
+<nav>
+  <div class="wrap">
+    <div class="brand">Flowtive · Proposal</div>
+    <ul>
+      <li><a href="#problem">Problem</a></li>
+      <li><a href="#solution">Solution</a></li>
+      <li><a href="#flow">Architecture</a></li>
+      <li><a href="#delivery">Delivery</a></li>
+      <li><a href="#pricing">Pricing</a></li>
+      <li><a href="#next">Next Step</a></li>
+    </ul>
+  </div>
+</nav>
+
+<section class="hero">
+  <div class="container">
+    <h1>From Prototype to a Premium Zarabi Connect MVP, Ready for Real Buyers and Manufacturers</h1>
+    <p>I will turn your existing prototype into a polished, production-quality MVP with structured onboarding, profile systems, matching logic, and the kind of restrained UX a curated jewellery network actually deserves.</p>
+    <div style="margin-bottom:28px;display:flex;gap:12px;justify-content:center;flex-wrap:wrap">
+      <a class="btn" href="https://kristof-flowtive.github.io/zarabi-connect-mvp/" target="_blank" rel="noopener">View Interactive MVP Demo →</a>
+      <a class="btn btn-ghost" href="#solution">See the Plan</a>
+    </div>
+    <div class="badges">
+      <span class="badge"><svg><use href="#logo-next"/></svg>Next.js</span>
+      <span class="badge"><svg><use href="#logo-react"/></svg>React</span>
+      <span class="badge"><svg><use href="#logo-tailwind"/></svg>Tailwind</span>
+      <span class="badge"><svg><use href="#logo-supabase"/></svg>Supabase</span>
+      <span class="badge"><svg><use href="#logo-vercel"/></svg>Vercel</span>
+      <span class="badge"><svg><use href="#logo-figma"/></svg>Figma Handoff</span>
+    </div>
+  </div>
+</section>
+
+<section id="problem" class="pain">
+  <div class="container">
+    <span class="eyebrow">The Situation</span>
+    <h2>What's Likely Slowing You Down</h2>
+    <p class="lead">From the brief, I can read between the lines on where curated B2B prototypes usually stall when they try to grow up. Here is what I would expect you are running into.</p>
+    <div class="grid">
+      <div class="card"><span class="dot dot-red"></span><div><h3>The prototype proves the idea, not the experience</h3><p>It looks the part in demos but does not yet feel like a product a manufacturer would trust their brand to.</p></div></div>
+      <div class="card"><span class="dot dot-red"></span><div><h3>Onboarding is the entire product</h3><p>In a profile-driven network, weak onboarding means thin profiles, and thin profiles kill matching quality from day one.</p></div></div>
+      <div class="card"><span class="dot dot-red"></span><div><h3>Buyers and manufacturers are not the same user</h3><p>One generic signup flow forces both sides through the wrong questions, which is why most B2B directories feel hollow.</p></div></div>
+      <div class="card"><span class="dot dot-red"></span><div><h3>Matching is the hardest invisible feature</h3><p>Recommendations need clear inputs, weights, and a way to explain themselves, or they feel random and lose trust quickly.</p></div></div>
+      <div class="card"><span class="dot dot-red"></span><div><h3>Trust signals are doing a lot of quiet work</h3><p>In a curated network, verified badges, fair attendance, and references are not decoration. They are the reason a buyer replies.</p></div></div>
+      <div class="card"><span class="dot dot-red"></span><div><h3>You need a developer who thinks in product, not tickets</h3><p>The brief makes that explicit. The work needs judgement on UX behaviour, edge cases, and trade-offs, not pixel-pushing.</p></div></div>
+    </div>
+  </div>
+</section>
+
+<section id="solution" class="solution">
+  <div class="container">
+    <span class="eyebrow">The Fix</span>
+    <h2>Proposed Solution</h2>
+    <p>I will rebuild the prototype as a polished Next.js MVP with three first-class onboarding flows. Buyer, brand, and manufacturer, each tailored to what that side of the market actually needs to disclose to be matched well. Every flow is multi-step with progress tracking, save and continue later, and a structured profile output that becomes the input to the matching engine.</p>
+    <p>On top of that sits a clean discovery experience. Search and filtering for active browsing, a recommendation feed for passive discovery, and a trust layer of verification indicators that quietly signal which counterparties have been validated. The whole thing is built mobile-first with the kind of restrained, premium aesthetic the jewellery space expects.</p>
+  </div>
+</section>
+
+<section id="how">
+  <div class="container">
+    <span class="eyebrow">The Process</span>
+    <h2>How This Will Work</h2>
+    <p class="lead">Seven concrete workstreams, scoped to the MVP your brief describes.</p>
+    <div class="timeline">
+      <div class="step"><div class="num">1</div><h4>Prototype audit and product spec lock</h4><p>Walk the existing prototype, document the gaps, and lock the MVP scope against your product requirements doc.</p></div>
+      <div class="step"><div class="num">2</div><h4>Design system and component library</h4><p>Premium, restrained visual language. Buttons, inputs, cards, badges, and onboarding shell built once and reused everywhere.</p></div>
+      <div class="step"><div class="num">3</div><h4>Multi-step onboarding for all three roles</h4><p>Buyer, brand, and manufacturer flows. Each with progress bar, autosave, save and continue later, and resumable state.</p></div>
+      <div class="step"><div class="num">4</div><h4>Structured profile system</h4><p>Public profile pages with sections, media, certifications, fair attendance, and trust badges. Edit flows for each role.</p></div>
+      <div class="step"><div class="num">5</div><h4>Matching and recommendation engine</h4><p>Rules-first scoring on category, capability, MOQ, region, and price band. Designed so the logic is auditable, not a black box.</p></div>
+      <div class="step"><div class="num">6</div><h4>Discovery, search, and filtering</h4><p>Faceted filters, saved searches, and a recommendation feed on the dashboard. Mobile-first, fast, and quiet.</p></div>
+      <div class="step"><div class="num">7</div><h4>QA, accessibility, and handoff</h4><p>Mobile pass, keyboard pass, copy polish, deploy to Vercel, and a walkthrough so your team can extend it.</p></div>
+    </div>
+  </div>
+</section>
+
+<section id="flow">
+  <div class="container">
+    <span class="eyebrow">Architecture</span>
+    <h2>System Flow</h2>
+    <p class="lead">Four scenarios cover the MVP. Each one shows how data moves from onboarding into matching and discovery.</p>
+
+    <div class="flow">
+
+      <div class="scenario">
+        <h4>Scenario 1 · Buyer Onboarding to First Match</h4>
+        <div class="nodes">
+          <span class="node trigger"><svg><use href="#logo-buyer"/></svg>Buyer signs up</span>
+          <span class="arrow">→</span>
+          <span class="node"><svg><use href="#logo-next"/></svg>Multi-step flow</span>
+          <span class="arrow">→</span>
+          <span class="node"><svg><use href="#logo-supabase"/></svg>Profile saved</span>
+          <span class="arrow">→</span>
+          <span class="node"><svg><use href="#logo-match"/></svg>Match engine</span>
+          <span class="arrow">→</span>
+          <span class="node"><svg><use href="#logo-react"/></svg>Dashboard feed</span>
+        </div>
+      </div>
+
+      <div class="scenario">
+        <h4>Scenario 2 · Manufacturer Verification and Trust</h4>
+        <div class="nodes">
+          <span class="node trigger"><svg><use href="#logo-mfg"/></svg>Manufacturer applies</span>
+          <span class="arrow">→</span>
+          <span class="node"><svg><use href="#logo-next"/></svg>Capability profile</span>
+          <span class="arrow">→</span>
+          <span class="node"><svg><use href="#logo-postgres"/></svg>Verification record</span>
+          <span class="arrow">→</span>
+          <span class="node"><svg><use href="#logo-shield"/></svg>Trust badge issued</span>
+          <span class="arrow">→</span>
+          <span class="node"><svg><use href="#logo-react"/></svg>Profile goes live</span>
+        </div>
+      </div>
+
+      <div class="scenario">
+        <h4>Scenario 3 · Brand Discovery and Filtering</h4>
+        <div class="nodes">
+          <span class="node trigger"><svg><use href="#logo-brand"/></svg>Brand browses</span>
+          <span class="arrow">→</span>
+          <span class="node"><svg><use href="#logo-search"/></svg>Faceted filters</span>
+          <span class="arrow">→</span>
+          <span class="node"><svg><use href="#logo-supabase"/></svg>Query layer</span>
+          <span class="arrow">→</span>
+          <span class="node"><svg><use href="#logo-shield"/></svg>Verified results</span>
+          <span class="arrow">→</span>
+          <span class="node"><svg><use href="#logo-brand"/></svg>Saved shortlist</span>
+        </div>
+      </div>
+
+      <div class="scenario">
+        <h4>Scenario 4 · Save, Resume, and Progress</h4>
+        <div class="nodes">
+          <span class="node trigger"><svg><use href="#logo-buyer"/></svg>Step 3 of 6</span>
+          <span class="arrow">→</span>
+          <span class="node"><svg><use href="#logo-next"/></svg>Autosave on blur</span>
+          <span class="arrow">→</span>
+          <span class="node"><svg><use href="#logo-postgres"/></svg>Draft persisted</span>
+          <span class="arrow">→</span>
+          <span class="node"><svg><use href="#logo-react"/></svg>Magic link return</span>
+          <span class="arrow">→</span>
+          <span class="node"><svg><use href="#logo-match"/></svg>Resume to step 3</span>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<section id="benefits">
+  <div class="container">
+    <span class="eyebrow">The Outcome</span>
+    <h2>What You Get</h2>
+    <div class="grid">
+      <div class="card pain"><div style="display:flex;gap:14px;align-items:flex-start"><span class="dot dot-green"></span><div><h3>A premium-feeling MVP, not a prototype with paint</h3><p>Restrained typography, calm motion, and the kind of polish that earns trust from luxury buyers.</p></div></div></div>
+      <div class="card pain"><div style="display:flex;gap:14px;align-items:flex-start"><span class="dot dot-green"></span><div><h3>Three onboarding flows, one design system</h3><p>Buyer, brand, and manufacturer flows that share the same shell, so the product feels coherent and stays cheap to extend.</p></div></div></div>
+      <div class="card pain"><div style="display:flex;gap:14px;align-items:flex-start"><span class="dot dot-green"></span><div><h3>Save, resume, and progress baked in</h3><p>Drop-off is the silent killer of B2B onboarding. The flow handles partial completion as a first-class state.</p></div></div></div>
+      <div class="card pain"><div style="display:flex;gap:14px;align-items:flex-start"><span class="dot dot-green"></span><div><h3>A matching engine you can actually tune</h3><p>Rules-first scoring with explainable outputs, so you can iterate on weights as you learn from real users.</p></div></div></div>
+      <div class="card pain"><div style="display:flex;gap:14px;align-items:flex-start"><span class="dot dot-green"></span><div><h3>Trust indicators wired across the surface</h3><p>Verified badges, fair attendance, references, and response rate, all surfaced where they actually change buyer behaviour.</p></div></div></div>
+      <div class="card pain"><div style="display:flex;gap:14px;align-items:flex-start"><span class="dot dot-green"></span><div><h3>A codebase your next dev will not curse</h3><p>Typed, componentised, and documented. Ready for whoever extends it next, including me.</p></div></div></div>
+    </div>
+  </div>
+</section>
+
+<section id="why">
+  <div class="container">
+    <span class="eyebrow">Why Me</span>
+    <h2>Why This Will Work</h2>
+    <div class="grid" style="grid-template-columns:1fr;max-width:780px">
+      <div class="card"><h3>SaaS and marketplace MVPs are my home turf</h3><p>Profile-heavy products with onboarding flows and dashboards are exactly the shape of work I ship most often.</p></div>
+      <div class="card"><h3>I treat onboarding as the product, not a setup screen</h3><p>Multi-step flows, autosave, progress, and resume are first-class concerns in my builds, not afterthoughts.</p></div>
+      <div class="card"><h3>I think in product, not just in code</h3><p>The brief calls out collaboration, ambiguity, and ideas. I will push back on scope when it makes the MVP weaker, and document the why.</p></div>
+      <div class="card"><h3>Matching logic I have actually shipped</h3><p>Rules-first scoring with explainability is the right MVP shape. Smarter models can come later, once you have real signal to train on.</p></div>
+      <div class="card"><h3>Premium UX is a craft, not a Tailwind preset</h3><p>Spacing, motion, copy, and restraint. The jewellery space punishes loud design, and the product should reflect that.</p></div>
+    </div>
+  </div>
+</section>
+
+<section id="delivery" class="delivery">
+  <div class="container">
+    <span class="eyebrow">Schedule</span>
+    <h2>Delivery Plan</h2>
+    <p class="lead">Four weeks to a deployable MVP, broken down so you always know what is happening.</p>
+    <div class="timeline">
+      <div class="step"><div class="num">Week 1</div><h4>Audit, spec lock, design system</h4><p>Prototype walkthrough, MVP scope sign-off, component library and onboarding shell built.</p></div>
+      <div class="step"><div class="num">Week 2</div><h4>Onboarding flows</h4><p>Buyer, brand, and manufacturer multi-step flows with autosave, progress, and save-and-continue.</p></div>
+      <div class="step"><div class="num">Week 3</div><h4>Profiles, matching, and discovery</h4><p>Structured profile pages, rules-based matching engine, search and faceted filtering, recommendation feed.</p></div>
+      <div class="step"><div class="num">Week 4</div><h4>Trust layer, QA, deploy, handoff</h4><p>Verification badges, mobile and accessibility pass, deploy to Vercel, walkthrough video and handoff doc.</p></div>
+    </div>
+  </div>
+</section>
+
+<section id="pricing">
+  <div class="container">
+    <span class="eyebrow">Investment</span>
+    <h2>Pricing</h2>
+    <p class="lead">Three fixed-price tiers. Pick the depth of MVP you want and the price is the price. No hourly billing, no scope creep, no surprise invoices.</p>
+
+    <div class="tier-grid">
+
+      <div class="tier">
+        <span class="label">Tier 1</span>
+        <h3>Focused MVP</h3>
+        <p class="tagline">One polished flow end to end, ready for first-user reactions.</p>
+        <div class="price">$2,300</div>
+        <div class="price-meta">Fixed price · 3 weeks</div>
+        <ul>
+          <li>Buyer onboarding flow, fully polished</li>
+          <li>Multi-step flow with autosave and resume</li>
+          <li>Rules-based matching engine, core scoring</li>
+          <li>Basic search and filtering on discovery</li>
+          <li>Mobile-responsive premium UI</li>
+          <li>Deploy to Vercel with handoff doc</li>
+        </ul>
+        <a class="tier-btn" href="#next">Choose Focused</a>
+      </div>
+
+      <div class="tier recommended">
+        <span class="ribbon">Recommended</span>
+        <span class="label">Tier 2 · Best fit for the brief</span>
+        <h3>Full MVP</h3>
+        <p class="tagline">All three flows, the matching engine, discovery, and the trust layer.</p>
+        <div class="price">$3,900</div>
+        <div class="price-meta">Fixed price · 4 weeks</div>
+        <ul>
+          <li>Buyer, brand, and manufacturer onboarding flows</li>
+          <li>Save and continue, progress tracking, magic-link resume</li>
+          <li>Structured profile system for all three roles</li>
+          <li>Rules-based matching with explainable score breakdown</li>
+          <li>Faceted search, filtering, saved shortlists</li>
+          <li>Trust and verification indicator layer</li>
+          <li>Mobile, accessibility, and performance pass</li>
+          <li>Deploy, walkthrough video, and codebase handoff</li>
+        </ul>
+        <a class="tier-btn" href="#next">Choose Full MVP</a>
+      </div>
+
+      <div class="tier">
+        <span class="label">Tier 3</span>
+        <h3>MVP + Iteration Buffer</h3>
+        <p class="tagline">Full MVP plus two weeks of post-launch iteration on real user reactions.</p>
+        <div class="price">$4,800</div>
+        <div class="price-meta">Fixed price · 6 weeks</div>
+        <ul>
+          <li>Everything in Full MVP</li>
+          <li>Two-week iteration window after first deploy</li>
+          <li>Refinement on matching weights from real usage</li>
+          <li>UX adjustments based on first-user feedback</li>
+          <li>Two rounds of copy and microcopy polish</li>
+          <li>Weekly review calls during iteration phase</li>
+        </ul>
+        <a class="tier-btn" href="#next">Choose Iteration</a>
+      </div>
+
+    </div>
+
+    <div class="price-explainer">
+      <h3>Why the pricing is what it is</h3>
+      <p>These prices are <strong>well below agency rates</strong> for the same scope, and that is deliberate. The brief signals long-term collaboration potential, and I would rather earn a fair price on the MVP and build trust through the work than overcharge a first engagement and lose the follow-on.</p>
+      <p>What you are not paying for is <strong>agency overhead</strong>. No account managers, no project managers between you and the person writing the code, no sales team to subsidise. You talk to me directly, every day, async or on call.</p>
+      <p>What you are paying for is <strong>focused senior product engineering</strong>. Four weeks of full attention, judgement on UX and edge cases, and a codebase your next developer will not curse. Fixed price means the budget is locked. Scope changes get quoted separately, not bolted onto the invoice.</p>
+    </div>
+
+    <div class="pricing-notes">
+      <div class="note"><div class="k">Payment</div><div class="v">15% to start, 85% on handoff. Billed through Upwork escrow.</div></div>
+      <div class="note"><div class="k">Revisions</div><div class="v">Two rounds of revisions included on each major deliverable. Substantial scope changes quoted separately.</div></div>
+      <div class="note"><div class="k">What is not included</div><div class="v">Hosting fees (Vercel, Supabase), domain, third-party services, branded design assets if needed beyond UI work.</div></div>
+      <div class="note"><div class="k">After the MVP</div><div class="v">Continued work at $85 / hour, or a monthly retainer for sustained development. Quoted on request.</div></div>
+    </div>
+  </div>
+</section>
+
+<section id="next">
+  <div class="container">
+    <div class="cta-box">
+      <span class="eyebrow">Ready to Start</span>
+      <h2>Next Step</h2>
+      <p>Share the existing prototype and the product requirements doc. I will reply within 24 hours with a confirmed scope, a fixed price, and a start date. Click the demo above to see the shape of MVP I would build for you.</p>
+      <div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap">
+        <a class="btn" href="https://www.upwork.com/messages/">Reply on Upwork</a>
+        <a class="btn btn-ghost" href="https://kristof-flowtive.github.io/zarabi-connect-mvp/" target="_blank" rel="noopener">Open the Demo</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  Built by Flowtive · Four week delivery · Next.js, Supabase, Vercel
+</footer>
+
+</body>
+</html>
